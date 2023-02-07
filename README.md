@@ -1,6 +1,6 @@
 # ms-graph-app
 
-Coming later...
+The ms-graph-app allows the user to create text files, share them with the desired people (Microsoft account holders) and view the files created with the application. To use the application, you must have a Microsoft account.
 
 # To run locally
 
