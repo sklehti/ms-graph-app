@@ -32,13 +32,16 @@ function FormFilling() {
     if (provider) {
       let graphClient = provider.graph.client;
       let userDetails = await graphClient.api("/me").get();
-
-      const search = await graphClient
-        .api("/me/drive/root/search(q='Sovellukset')?select=name,id,webUrl")
-        .get();
-
-      setFolderInfo(search.value);
       setUserInfo(userDetails);
+
+      const children = await graphClient.api("/me/drive/root/children").get();
+      let rightFolder = children.value.filter(
+        (file) => file.name === "Sovellukset"
+      );
+
+      if (rightFolder.length > 0) {
+        setFolderInfo(rightFolder[0].webUrl);
+      }
     }
   };
 
@@ -46,7 +49,7 @@ function FormFilling() {
    * open your OneDrive files
    */
   const handleOpenFileLink = async (e) => {
-    window.open(folderInfo[0].webUrl, "_blank");
+    window.open(folderInfo, "_blank");
   };
 
   /**
@@ -97,9 +100,11 @@ function FormFilling() {
           )
           .put(formText);
 
-        await graphClient
-          .api(`/me/drive/items/${children.id}/invite`)
-          .post(permission);
+        if (peopleEmails.length > 0) {
+          await graphClient
+            .api(`/me/drive/items/${children.id}/invite`)
+            .post(permission);
+        }
 
         setFormText("");
         setFileName("");
